@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>لوحة مؤشرات التنمية - محافظة جنوب سيناء 2025</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07131E;--surf:#0C1E2E;--card:#112333;--card2:#152A3C;
+  --b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);
+  --gold:#B8882A;--gold2:#D4A43C;--gold3:#F0C060;
+  --teal:#0A8E7D;--teal2:#10B8A2;--teal3:#3DD5C2;
+  --sky:#1358A8;--sky2:#1D7FD8;--sky3:#5AB0F0;
+  --red:#952820;--red2:#C43A2C;--red3:#E86050;
+  --grn:#1A6038;--grn2:#208248;--grn3:#38B06A;
+  --pur:#3B2888;--pur2:#5438B0;--pur3:#8068D8;
+  --amb:#9A4E08;--amb2:#C86810;--amb3:#F09438;
+  --txt:#D8EAF6;--txt2:#7A9EC0;--txt3:#3A5E78;
+  --fd:'Cairo',sans-serif;--fb:'Cairo',sans-serif;
+  --r:8px;--rl:12px;
+}
+html{font-size:15px}
+body{background:var(--bg);color:var(--txt);font-family:var(--fb);line-height:1.6}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(10,142,125,.03) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(10,142,125,.03) 1px,transparent 1px);
+  background-size:44px 44px}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:300;background:rgba(7,19,30,.97);
+  backdrop-filter:blur(18px);border-bottom:1px solid var(--b1);
+  height:64px;padding:0 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.hbrand{display:flex;align-items:center;gap:11px}
+.hlogo{height:46px;width:46px;object-fit:contain;flex-shrink:0;
+  filter:drop-shadow(0 0 8px rgba(180,132,42,.4))}
+.hname{font-family:var(--fd);font-size:14px;font-weight:700;color:#fff;line-height:1.25}
+.hsub{font-size:10px;color:var(--teal3);margin-top:1px;letter-spacing:.05em}
+.hmeta{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.hsrc{font-size:10px;color:var(--txt2);line-height:1.6;text-align:left}
+.hsrc b{color:var(--teal2)}
+.hchip{font-family:var(--fd);font-size:10.5px;font-weight:700;
+  padding:3px 11px;border-radius:99px;
+  background:rgba(10,142,125,.14);border:1px solid rgba(10,142,125,.3);
+  color:var(--teal2);white-space:nowrap}
+
+/* NAV */
+.nav{position:sticky;top:64px;z-index:200;background:var(--surf);
+  border-bottom:1px solid var(--b1);
+  display:flex;align-items:stretch;padding:0 .4rem;
+  overflow-x:auto;scrollbar-width:none;white-space:nowrap}
+.nav::-webkit-scrollbar{display:none}
+.nbtn{font-family:var(--fd);font-size:11.5px;font-weight:600;color:var(--txt3);
+  padding:0 12px;height:46px;border:none;background:transparent;cursor:pointer;
+  border-bottom:2px solid transparent;display:inline-flex;align-items:center;gap:4px;
+  transition:color .18s,border-color .18s}
+.nbtn:hover{color:var(--txt)}
+.nbtn.active{color:var(--gold2);border-bottom-color:var(--gold2)}
+
+/* PAGE */
+.page{display:none;padding:1.4rem 1.5rem 3rem;max-width:1440px;margin:0 auto;position:relative;z-index:1}
+
+/* HERO BAND */
+.hero{background:var(--surf);border:1px solid var(--b1);border-radius:var(--rl);
+  padding:1rem 1.4rem;margin-bottom:1.4rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.hero-ar{font-family:var(--fd);font-size:16px;font-weight:900;color:#fff}
+.hero-en{font-size:10.5px;color:var(--txt2);margin-top:2px;letter-spacing:.05em}
+.hero-tag{font-family:var(--fd);font-size:10.5px;font-weight:700;
+  padding:4px 13px;border-radius:99px;
+  background:rgba(180,132,42,.12);border:1px solid rgba(180,132,42,.28);
+  color:var(--gold2);white-space:nowrap}
+
+/* SECTION LABEL */
+.sl{font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--teal2);margin:1.4rem 0 .75rem;
+  display:flex;align-items:center;gap:7px}
+.sl::after{content:'';flex:1;height:1px;background:var(--b1)}
+
+/* KPI STRIP */
+.kgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:9px}
+@media(max-width:1080px){.kgrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:620px){.kgrid{grid-template-columns:repeat(2,1fr)}}
+.kcard{background:var(--card);border:1px solid var(--b1);border-radius:var(--rl);
+  padding:.85rem .95rem .8rem;position:relative;overflow:hidden;
+  transition:transform .16s,border-color .16s}
+.kcard:hover{transform:translateY(-2px);border-color:var(--b2)}
+.kbar{position:absolute;bottom:0;left:0;right:0;height:3px}
+.knum{font-family:var(--fd);font-size:22px;font-weight:900;color:#fff;line-height:1;margin-bottom:4px;margin-top:6px}
+.klbl{font-size:11px;color:var(--txt2);font-weight:500}
+.ksub{font-size:9.5px;color:var(--txt3);margin-top:2px}
+
+/* CONTENT GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.g13{display:grid;grid-template-columns:1fr 2fr;gap:11px}
+.g31{display:grid;grid-template-columns:2fr 1fr;gap:11px}
+@media(max-width:880px){.g2,.g3,.g13,.g31{grid-template-columns:1fr}}
+@media(max-width:680px){.g4{grid-template-columns:1fr 1fr}}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--b1);border-radius:var(--rl);
+  padding:1.05rem 1.15rem;position:relative;overflow:hidden}
+.ct{font-family:var(--fd);font-size:13px;font-weight:700;color:var(--txt);
+  margin-bottom:.75rem;display:flex;align-items:center;gap:6px}
+.cdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;display:inline-block}
+
+/* STAT ROWS */
+.stbl{display:flex;flex-direction:column}
+.sr{display:flex;align-items:baseline;justify-content:space-between;
+  padding:6px 0;border-bottom:1px solid var(--b1)}
+.sr:last-child{border-bottom:none}
+.sk{font-size:12px;color:var(--txt2);flex:1;padding-left:6px}
+.sv{font-size:12.5px;font-weight:700;color:var(--txt);font-family:var(--fd);
+  text-align:right;white-space:nowrap;flex-shrink:0}
+
+/* PROGRESS */
+.plist{display:flex;flex-direction:column;gap:9px}
+.prow{display:flex;align-items:center;gap:8px}
+.plbl{font-size:11.5px;color:var(--txt2);flex-shrink:0;min-width:110px;text-align:right}
+.ptrk{flex:1;height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+.pfill{height:100%;border-radius:99px}
+.ppct{font-size:11.5px;font-weight:700;color:var(--txt);width:36px;text-align:left;font-family:var(--fd)}
+
+/* HIGHLIGHT BOXES */
+.hlg{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.hlb{border-radius:var(--r);padding:.8rem;text-align:center;border:1px solid transparent}
+.hlb.ok{background:rgba(26,96,56,.15);border-color:rgba(32,130,72,.3)}
+.hlb.warn{background:rgba(154,78,8,.15);border-color:rgba(200,104,16,.3)}
+.hlb.info{background:rgba(19,88,168,.15);border-color:rgba(29,127,216,.3)}
+.hlv{font-family:var(--fd);font-size:20px;font-weight:900}
+.hlb.ok .hlv{color:var(--grn3)}.hlb.warn .hlv{color:var(--gold2)}.hlb.info .hlv{color:var(--sky2)}
+.hll{font-size:10px;color:var(--txt2);margin-top:3px}
+
+/* MINI STATS */
+.m3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:.75rem}
+.mb{text-align:center;background:rgba(255,255,255,.03);border-radius:var(--r);
+  padding:.6rem .4rem;border:1px solid var(--b1)}
+.mbv{font-family:var(--fd);font-size:18px;font-weight:900}
+.mbl{font-size:9.5px;color:var(--txt3);margin-top:2px}
+
+/* CONCERN ITEMS */
+.clist{display:flex;flex-direction:column;gap:6px}
+.citem{display:flex;align-items:flex-start;gap:8px;
+  background:rgba(255,255,255,.03);border-radius:var(--r);
+  padding:.6rem .8rem;border-right:3px solid var(--gold2)}
+.cnum{font-family:var(--fd);font-size:12.5px;font-weight:900;color:var(--gold2);
+  flex-shrink:0;min-width:18px;line-height:1.5}
+.ctxt{font-size:12.5px;color:var(--txt);line-height:1.55}
+
+/* PROJECT ITEMS */
+.pjlist{display:flex;flex-direction:column;gap:6px}
+.pjitem{display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.03);border-radius:var(--r);
+  padding:.55rem .8rem;border:1px solid var(--b1)}
+.pjn{font-size:12px;color:var(--txt);flex:1;line-height:1.4}
+.pjc{font-size:12px;font-weight:700;color:var(--gold2);white-space:nowrap;font-family:var(--fd)}
+.pjok{font-size:9.5px;padding:2px 7px;border-radius:99px;
+  background:rgba(26,96,56,.2);color:var(--grn3);white-space:nowrap}
+
+/* INVEST CARDS */
+.igrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:820px){.igrid{grid-template-columns:1fr 1fr}}
+.icard{background:var(--card2);border:1px solid var(--b1);border-radius:var(--rl);
+  padding:.95rem 1rem .9rem}
+.iico{font-size:22px;margin-bottom:6px}
+.it{font-size:12.5px;font-weight:700;color:var(--txt);margin-bottom:5px;font-family:var(--fd)}
+.ipts{display:flex;flex-direction:column;gap:4px}
+.ipt{font-size:11px;color:var(--txt2);padding-right:10px;line-height:1.5;position:relative}
+.ipt::before{content:'';position:absolute;right:0;top:7px;width:4px;height:4px;
+  border-radius:50%;background:var(--gold2)}
+
+/* CITY TAGS */
+.cwrap{display:flex;flex-wrap:wrap;gap:7px}
+.ctag{font-size:12px;font-weight:500;padding:4px 12px;border-radius:99px;
+  border:1px solid var(--b1);background:rgba(255,255,255,.03);color:var(--txt2);
+  cursor:default;transition:all .16s}
+.ctag:hover{background:rgba(10,142,125,.12);border-color:rgba(10,142,125,.35);color:var(--teal2)}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.litem{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--txt2)}
+.lsq{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+
+/* CHART WRAPPER */
+.cw{position:relative;width:100%}
+
+/* GLOW */
+.gt{position:absolute;pointer-events:none;width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(10,142,125,.07) 0%,transparent 70%);top:-50px;left:-50px}
+.gg{position:absolute;pointer-events:none;width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(180,132,42,.06) 0%,transparent 70%);bottom:-40px;right:-40px}
+
+/* DIVIDER */
+.dv{height:1px;background:var(--b1);margin:.75rem 0}
+
+/* NOTE BOX */
+.note{font-size:11.5px;color:var(--txt2);padding:.65rem .85rem;
+  background:rgba(29,127,216,.07);border-radius:var(--r);
+  border:1px solid rgba(29,127,216,.18);line-height:1.65;margin-top:.75rem}
+.note b{color:var(--sky2)}
+
+/* FOOTER */
+.ft{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--b1);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;
+  font-size:10px;color:var(--txt3)}
+.ft b{color:var(--teal2)}
+
+/* PORT ITEMS */
+.port{display:flex;align-items:center;justify-content:space-between;
+  padding:7px 0;border-bottom:1px solid var(--b1)}
+.port:last-child{border-bottom:none}
+.pname{font-size:12.5px;color:var(--txt)}
+.ptype{font-size:11px;padding:2px 9px;border-radius:99px;font-weight:600}
+.ptype.sea{background:rgba(10,142,125,.15);color:var(--teal2)}
+.ptype.land{background:rgba(180,132,42,.15);color:var(--gold2)}
+.ptype.fish{background:rgba(29,127,216,.15);color:var(--sky2)}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hbrand">
+    <img class="hlogo" src="data:image/png;base64,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" alt="شعار المحافظة">
+    <div>
+      <div class="hname">المرصد الحضري &mdash; محافظة جنوب سيناء</div>
+      <div class="hsub">Urban Observatory &bull; South Sinai Governorate</div>
+    </div>
+  </div>
+  <div class="hmeta">
+    <div class="hsrc"><b>المصدر:</b> مركز المعلومات<br>بديوان عام محافظة جنوب سيناء</div>
+    <div class="hchip">2025</div>
+  </div>
+</header>
+
+<nav class="nav">
+  <button class="nbtn active" onclick="showPage('home')">الرئيسية</button>
+  <button class="nbtn" onclick="showPage('health')">الصحة</button>
+  <button class="nbtn" onclick="showPage('edu')">التعليم</button>
+  <button class="nbtn" onclick="showPage('svc')">الخدمات الاساسية</button>
+  <button class="nbtn" onclick="showPage('econ')">الانشطة الاقتصادية</button>
+  <button class="nbtn" onclick="showPage('transport')">الموانئ والنقل</button>
+  <button class="nbtn" onclick="showPage('social')">الخدمات الاجتماعية</button>
+  <button class="nbtn" onclick="showPage('deprive')">مؤشرات الحرمان</button>
+  <button class="nbtn" onclick="showPage('dev')">جهود التنمية</button>
+  <button class="nbtn" onclick="showPage('projects')">المشروعات المنفذة بنسبة 100%</button>
+  <button class="nbtn" onclick="showPage('invest')">فرص الاستثمار</button>
+  <button class="nbtn" onclick="showPage('concerns')">هموم المواطنين</button>
+</nav>
+<section id="p-home" class="page" style="display:block">
+<div class="hero"><div><div class="hero-ar">لوحة مؤشرات التنمية لمحافظة جنوب سيناء</div><div class="hero-en">South Sinai Governorate Development Dashboard 2025</div></div><div class="hero-tag">الصفحة الرئيسية</div></div>
+
+<div class="sl">اهم مؤشرات المحافظة</div>
+<div class="kgrid">
+<div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#0A8E7D,#10B8A2)"></div><div class="knum">121,261</div><div class="klbl">اجمالي السكان</div><div class="ksub">تقدير 1/7/2025</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#1358A8,#1D7FD8)"></div><div class="knum">29,537</div><div class="klbl">المساحة الكلية كم&#178;</div><div class="ksub">3% من مساحة مصر</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#B8882A,#D4A43C)"></div><div class="knum">1.46%</div><div class="klbl">معدل الزيادة الطبيعية</div><div class="ksub">2024/2025</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#952820,#C43A2C)"></div><div class="knum">20%</div><div class="klbl">معدل البطالة</div><div class="ksub">قوة عمل 68,296 الف</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#1A6038,#208248)"></div><div class="knum">2%</div><div class="klbl">نسبة الامية</div><div class="ksub">2024/2025</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#3B2888,#5438B0)"></div><div class="knum">36,589</div><div class="klbl">فدان مزروع</div><div class="ksub">قمح - شعير - زيتون</div></div>
+</div>
+
+<div class="sl">بيانات السكان والتقسيم الاداري</div>
+<div class="g3">
+  <div class="card">
+    <div class="gt"></div>
+    <div class="ct"><span class="cdot" style="background:var(--teal2)"></span>بيانات السكان 2025</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">اجمالي السكان (1/7/2025)</span><span class="sv" style="color:var(--teal2)">121,261 نسمة</span></div><div class="sr"><span class="sk">نسبة سكان الحضر</span><span class="sv">56.47%</span></div><div class="sr"><span class="sk">نسبة سكان الريف</span><span class="sv">43.53%</span></div><div class="sr"><span class="sk">نسبة من اجمالي سكان مصر</span><span class="sv">0.11%</span></div><div class="sr"><span class="sk">معدل الزيادة الطبيعية</span><span class="sv">1.46%</span></div><div class="sr"><span class="sk">قوة العمل الاجمالية</span><span class="sv">68,296 الف</span></div><div class="sr"><span class="sk">عدد المشتغلين</span><span class="sv" style="color:var(--grn2)">55,120 الف</span></div><div class="sr"><span class="sk">عدد المتعطلين</span><span class="sv" style="color:var(--red2)">1,867 الف</span></div><div class="sr"><span class="sk">معدل البطالة</span><span class="sv" style="color:var(--red2)">20%</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--sky2)"></span>التقسيم الاداري والمساحة</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">المساحة الكلية</span><span class="sv">29,537 كم&#178;</span></div><div class="sr"><span class="sk">المساحة المأهولة</span><span class="sv">457 كم&#178;</span></div><div class="sr"><span class="sk">عدد المراكز</span><span class="sv">6 مراكز</span></div><div class="sr"><span class="sk">عدد المدن</span><span class="sv">9 مدن</span></div><div class="sr"><span class="sk">الوحدات المحلية الريفية</span><span class="sv">10 وحدات</span></div><div class="sr"><span class="sk">التجمعات البدوية الرئيسية</span><span class="sv">154 تجمع</span></div><div class="sr"><span class="sk">المناطق العشوائية</span><span class="sv" style="color:var(--grn2)">لا يوجد</span></div><div class="sr"><span class="sk">الكثافة السكانية</span><span class="sv">4 نسمة / كم&#178;</span></div><div class="sr"><span class="sk">طول الشاطئ الكلي</span><span class="sv">600 كم</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--gold2)"></span>مؤشرات رئيسية</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">اجمالي الطرق المرصوفة</span><span class="sv">1,075.8 كم</span></div><div class="sr"><span class="sk">كثافة الفصل (التعليم العام)</span><span class="sv">24 تلميذ/فصل</span></div><div class="sr"><span class="sk">نسبة المستفيدين من التموين</span><span class="sv" style="color:var(--gold2)">60.7%</span></div><div class="sr"><span class="sk">اهم المحاصيل</span><span class="sv">قمح - شعير - زيتون</span></div><div class="sr"><span class="sk">المساحة المزروعة</span><span class="sv">36,589 فدان</span></div><div class="sr"><span class="sk">اجمالي الفنادق</span><span class="sv">244 فندق</span></div><div class="sr"><span class="sk">الطاقة الفندقية (سرير)</span><span class="sv">132,766</span></div><div class="sr"><span class="sk">المحميات الطبيعية</span><span class="sv">15 محمية</span></div><div class="sr"><span class="sk">الموانئ البحرية</span><span class="sv">5 موانئ</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="sl">المؤشرات الديموجرافية</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--teal2)"></span>توزيع السكان وفق الحالة التعليمية (تعداد 2017 - 10 سنوات فاكثر)</div>
+    <div class="legend">
+<span class="litem"><span class="lsq" style="background:#10B8A2"></span>اقل من المتوسط (25,036)</span><span class="litem"><span class="lsq" style="background:#1D7FD8"></span>متوسط وفوق (15,627)</span><span class="litem"><span class="lsq" style="background:#D4A43C"></span>جامعي فاعلى (10,917)</span><span class="litem"><span class="lsq" style="background:#4A6E88"></span>امي (12,175)</span><span class="litem"><span class="lsq" style="background:#C43A2C"></span>يقرا ويكتب (9,566)</span>
+    </div>
+    <div class="cw" style="height:210px"><canvas id="ch-edu-dist" role="img" aria-label="توزيع التعليم">توزيع المستوى التعليمي.</canvas></div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--sky2)"></span>سوق العمل - القوى العاملة (الف)</div>
+    <div class="legend">
+<span class="litem"><span class="lsq" style="background:#1D7FD8"></span>قوة العمل الاجمالية</span><span class="litem"><span class="lsq" style="background:#208248"></span>المشتغلون</span><span class="litem"><span class="lsq" style="background:#C43A2C"></span>المتعطلون</span>
+    </div>
+    <div class="cw" style="height:170px"><canvas id="ch-labor" role="img" aria-label="سوق العمل">بيانات سوق العمل.</canvas></div>
+    <div class="dv"></div>
+    <div class="hlg">
+<div class="hlb ok"><div class="hlv">56.47%</div><div class="hll">سكان الحضر</div></div><div class="hlb warn"><div class="hlv">20%</div><div class="hll">معدل البطالة</div></div><div class="hlb info"><div class="hlv">1.46%</div><div class="hll">الزيادة الطبيعية</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="sl">المدن التسع</div>
+<div class="cwrap">
+  <span class="ctag">شرم الشيخ</span>
+  <span class="ctag">طور سيناء (العاصمة)</span>
+  <span class="ctag">ابو زنيمة</span>
+  <span class="ctag">ابو رديس</span>
+  <span class="ctag">راس سدر</span>
+  <span class="ctag">سانت كاترين</span>
+  <span class="ctag">دهب</span>
+  <span class="ctag">نويبع</span>
+  <span class="ctag">طابا</span>
+</div>
+
+<div class="ft">
+  <span><b>اعداد:</b> المرصد الحضري لمحافظة جنوب سيناء</span>
+  <span><b>المصدر:</b> مركز المعلومات بديوان عام محافظة جنوب سيناء &mdash; 2025</span>
+</div>
+</section>
+<section id="p-health" class="page">
+<div class="hero"><div><div class="hero-ar">مؤشرات قطاع الصحة</div><div class="hero-en">Health Sector Indicators</div></div><div class="hero-tag">Drill Down &mdash; الصحة</div></div>
+
+<div class="sl">مؤشرات رئيسية</div>
+<div class="kgrid">
+<div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#952820,#C43A2C)"></div><div class="knum">8</div><div class="klbl">مستشفى حكومي (باسرة)</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#1358A8,#1D7FD8)"></div><div class="knum">6</div><div class="klbl">مستشفى خاص (باسرة)</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#1A6038,#208248)"></div><div class="knum">681</div><div class="klbl">اجمالي الاسرة</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#0A8E7D,#10B8A2)"></div><div class="knum">1,998</div><div class="klbl">اطباء</div><div class="ksub">بشري + اسنان + صيادلة</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#B8882A,#D4A43C)"></div><div class="knum">67</div><div class="klbl">سيارات الاسعاف</div><div class="ksub">46 مركز ونقطة</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#3B2888,#5438B0)"></div><div class="knum">41</div><div class="klbl">معمل تحاليل</div></div>
+</div>
+
+<div class="sl">تفاصيل البنية التحتية الصحية</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--red2)"></span>المنشآت والكوادر الصحية</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">مستشفيات حكومية (باسرة)</span><span class="sv">8</span></div><div class="sr"><span class="sk">مستشفيات خاصة (باسرة)</span><span class="sv">6</span></div><div class="sr"><span class="sk">وحدات صحية (بدون اسرة)</span><span class="sv">18</span></div><div class="sr"><span class="sk">مراكز صحية (بدون اسرة)</span><span class="sv">9</span></div><div class="sr"><span class="sk">مكاتب صحة</span><span class="sv">18</span></div><div class="sr"><span class="sk">اجمالي الاسرة</span><span class="sv">681</span></div><div class="sr"><span class="sk">عدد الاطباء (بشري + اسنان + صيادلة)</span><span class="sv">1,998</span></div><div class="sr"><span class="sk">عدد الممرضين</span><span class="sv">1,795</span></div><div class="sr"><span class="sk">وحدات تنظيم الاسرة</span><span class="sv">30</span></div><div class="sr"><span class="sk">سيارات الاسعاف</span><span class="sv">67</span></div><div class="sr"><span class="sk">مراكز ونقاط الاسعاف</span><span class="sv">46</span></div><div class="sr"><span class="sk">معامل (حكومي + خاص)</span><span class="sv">41</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--grn2)"></span>توزيع الكوادر الصحية</div>
+    <div class="legend"><span class="litem"><span class="lsq" style="background:#C43A2C"></span>اطباء 1,998</span><span class="litem"><span class="lsq" style="background:#1D7FD8"></span>ممرضون 1,795</span><span class="litem"><span class="lsq" style="background:#D4A43C"></span>اسعاف 67</span></div>
+    <div class="cw" style="height:190px"><canvas id="ch-health-staff" role="img" aria-label="الكوادر الصحية">توزيع الكوادر.</canvas></div>
+    <div class="dv"></div>
+    <div class="ct" style="margin-bottom:.6rem"><span class="cdot" style="background:var(--sky2)"></span>توزيع المنشآت الصحية</div>
+    <div class="legend"><span class="litem"><span class="lsq" style="background:#C43A2C"></span>مستشفى حكومي 8</span><span class="litem"><span class="lsq" style="background:#E86050"></span>مستشفى خاص 6</span><span class="litem"><span class="lsq" style="background:#1D7FD8"></span>وحدة صحية 18</span><span class="litem"><span class="lsq" style="background:#10B8A2"></span>مركز صحي 9</span><span class="litem"><span class="lsq" style="background:#D4A43C"></span>مكتب صحة 18</span></div>
+    <div class="cw" style="height:160px"><canvas id="ch-health-fac" role="img" aria-label="المنشآت الصحية">توزيع المنشآت الصحية.</canvas></div>
+  </div>
+</div>
+<div class="ft"><span><b>اعداد:</b> المرصد الحضري لمحافظة جنوب سيناء</span><span><b>المصدر:</b> مديرية الصحة وهيئة الرعاية الصحية &bull; يناير 2026</span></div>
+</section>
+<section id="p-edu" class="page">
+<div class="hero"><div><div class="hero-ar">مؤشرات قطاع التعليم</div><div class="hero-en">Education Sector Indicators</div></div><div class="hero-tag">Drill Down &mdash; التعليم</div></div>
+
+<div class="sl">مؤشرات رئيسية</div>
+<div class="kgrid">
+<div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#1A6038,#208248)"></div><div class="knum">385</div><div class="klbl">مدارس عامة</div><div class="ksub">1,939 فصل</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#0A8E7D,#10B8A2)"></div><div class="knum">46,869</div><div class="klbl">تلاميذ (عام)</div><div class="ksub">47% اناث</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#1358A8,#1D7FD8)"></div><div class="knum">133</div><div class="klbl">معهد ازهري</div><div class="ksub">479 فصل</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#B8882A,#D4A43C)"></div><div class="knum">7,291</div><div class="klbl">تلاميذ ازهري</div><div class="ksub">48% اناث</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#3B2888,#5438B0)"></div><div class="knum">4,229</div><div class="klbl">مدرسون (عام)</div><div class="ksub">كثافة: 24</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#9A4E08,#C86810)"></div><div class="knum">2%</div><div class="klbl">نسبة الامية</div><div class="ksub">من اقل المحافظات</div></div>
+</div>
+
+<div class="sl">تفاصيل قطاعية</div>
+<div class="g3">
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--grn2)"></span>التعليم العام قبل الجامعي 2024/2025</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">عدد المدارس</span><span class="sv">385</span></div><div class="sr"><span class="sk">عدد الفصول</span><span class="sv">1,939</span></div><div class="sr"><span class="sk">اجمالي التلاميذ</span><span class="sv">46,869</span></div><div class="sr"><span class="sk">ذكور</span><span class="sv">24,790</span></div><div class="sr"><span class="sk">اناث</span><span class="sv">22,079</span></div><div class="sr"><span class="sk">المدرسون</span><span class="sv">4,229</span></div><div class="sr"><span class="sk">كثافة الفصل</span><span class="sv" style="color:var(--gold2)">24 تلميذ/فصل</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--sky2)"></span>التعليم الازهري قبل الجامعي 2024/2025</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">عدد المعاهد الازهرية</span><span class="sv">133</span></div><div class="sr"><span class="sk">عدد الفصول</span><span class="sv">479</span></div><div class="sr"><span class="sk">اجمالي التلاميذ</span><span class="sv">7,291</span></div><div class="sr"><span class="sk">ذكور</span><span class="sv">3,757</span></div><div class="sr"><span class="sk">اناث</span><span class="sv">3,534</span></div><div class="sr"><span class="sk">المدرسون</span><span class="sv">1,100</span></div><div class="sr"><span class="sk">كثافة الفصل</span><span class="sv" style="color:var(--grn2)">15 تلميذ/فصل</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--gold2)"></span>توزيع التلاميذ والمدارس</div>
+    <div class="legend"><span class="litem"><span class="lsq" style="background:#208248"></span>مدارس عامة 385</span><span class="litem"><span class="lsq" style="background:#10B8A2"></span>معاهد ازهرية 133</span><span class="litem"><span class="lsq" style="background:#D4A43C"></span>كليات ومعاهد 4</span></div>
+    <div class="cw" style="height:150px"><canvas id="ch-edu-schools" role="img" aria-label="المدارس">المدارس والمعاهد.</canvas></div>
+    <div class="dv"></div>
+    <div class="legend"><span class="litem"><span class="lsq" style="background:#208248"></span>تلاميذ عام 46,869</span><span class="litem"><span class="lsq" style="background:#1D7FD8"></span>تلاميذ ازهري 7,291</span><span class="litem"><span class="lsq" style="background:#D4A43C"></span>طلاب عالي 2,294</span></div>
+    <div class="cw" style="height:140px"><canvas id="ch-edu-students" role="img" aria-label="الطلاب">توزيع الطلاب.</canvas></div>
+  </div>
+</div>
+<div class="ft"><span><b>اعداد:</b> المرصد الحضري لمحافظة جنوب سيناء</span><span><b>المصدر:</b> مديرية التربية والتعليم &bull; ابريل 2025</span></div>
+</section>
+<section id="p-svc" class="page">
+<div class="hero"><div><div class="hero-ar">الخدمات الاساسية</div><div class="hero-en">Basic Services &amp; Infrastructure</div></div><div class="hero-tag">Drill Down &mdash; الخدمات</div></div>
+
+<div class="sl">نسب الاتصال بالشبكات الاساسية (تعداد 2017)</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--sky2)"></span>مقارنة الحضر والريف والاجمالي</div>
+    <div class="cw" style="height:260px"><canvas id="ch-svc-cover" role="img" aria-label="تغطية الخدمات">نسب تغطية الخدمات.</canvas></div>
+    <div style="font-size:10px;color:var(--txt3);margin-top:7px">* بيانات التعداد السكاني 2017</div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--gold2)"></span>البنية التحتية للمرافق</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">محطات المياه النقية المنتجة</span><span class="sv">20</span></div><div class="sr"><span class="sk">محطات تحلية</span><span class="sv">13</span></div><div class="sr"><span class="sk">سيارات نقل مياه الشرب</span><span class="sv">34</span></div><div class="sr"><span class="sk">محطات طاقة شمسية (شبكة التوزيع)</span><span class="sv">46</span></div><div class="sr"><span class="sk">عدادات الكهرباء مسبوقة الدفع</span><span class="sv">61,602</span></div><div class="sr"><span class="sk">محطات رفع الصرف الصحي</span><span class="sv">61</span></div><div class="sr"><span class="sk">محطات معالجة الصرف الصحي</span><span class="sv">11</span></div><div class="sr"><span class="sk">سيارات الصرف الصحي</span><span class="sv">25</span></div>
+    </div>
+    <div class="dv"></div>
+    <div class="ct" style="margin-bottom:.6rem"><span class="cdot" style="background:var(--teal2)"></span>ملخص نسب الاتصال الاجمالي</div>
+    <div class="hlg">
+<div class="hlb ok"><div class="hlv">95.3%</div><div class="hll">اتصال بالكهرباء</div></div><div class="hlb info"><div class="hlv">76.3%</div><div class="hll">اتصال بالصرف</div></div><div class="hlb warn"><div class="hlv">63.1%</div><div class="hll">اتصال بالمياه</div></div>
+    </div>
+  </div>
+</div>
+<div class="ft"><span><b>اعداد:</b> المرصد الحضري لمحافظة جنوب سيناء</span><span><b>المصدر:</b> شركة مياه الشرب والصرف الصحي &bull; 2025</span></div>
+</section>
+<section id="p-econ" class="page">
+<div class="hero"><div><div class="hero-ar">الانشطة الاقتصادية</div><div class="hero-en">Economic Activities</div></div><div class="hero-tag">Drill Down &mdash; الاقتصاد</div></div>
+
+<div class="sl">السياحة</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--gold2)"></span>مؤشرات السياحة 2025</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">اجمالي عدد الفنادق الثابتة</span><span class="sv">244</span></div><div class="sr"><span class="sk">عدد الغرف</span><span class="sv">63,117</span></div><div class="sr"><span class="sk">عدد الاسرة (سرير)</span><span class="sv">132,766</span></div><div class="sr"><span class="sk">نسبة الاشغال &mdash; فنادق جنوب سيناء</span><span class="sv" style="color:var(--gold2)">87%</span></div><div class="sr"><span class="sk">نسبة الاشغال &mdash; فنادق شرم الشيخ</span><span class="sv" style="color:var(--gold2)">88%</span></div><div class="sr"><span class="sk">عدد المدارس الفندقية</span><span class="sv">2</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--teal2)"></span>الطاقة الفندقية والاشغال</div>
+    <div class="legend"><span class="litem"><span class="lsq" style="background:#D4A43C"></span>فنادق (244)</span><span class="litem"><span class="lsq" style="background:#10B8A2"></span>غرف (الف) (63.1)</span><span class="litem"><span class="lsq" style="background:#1D7FD8"></span>اسرة (الف) (132.8)</span></div>
+    <div class="cw" style="height:170px"><canvas id="ch-tourism" role="img" aria-label="السياحة">بيانات السياحة.</canvas></div>
+    <div class="plist" style="margin-top:12px">
+<div class="prow"><span class="plbl">اشغال شرم الشيخ</span><div class="ptrk"><div class="pfill" style="width:88%;background:linear-gradient(90deg,#B8882A,#D4A43C)"></div></div><span class="ppct">88%</span></div><div class="prow"><span class="plbl">اشغال جنوب سيناء</span><div class="ptrk"><div class="pfill" style="width:87%;background:linear-gradient(90deg,#B8882A,#D4A43C)"></div></div><span class="ppct">87%</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="sl">الزراعة والثروة السمكية والصناعة</div>
+<div class="g3">
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--grn2)"></span>الزراعة</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">المساحة الزراعية (فدان)</span><span class="sv">36,589</span></div><div class="sr"><span class="sk">المساحة المنزرعة (فدان)</span><span class="sv">36,589</span></div><div class="sr"><span class="sk">جمعيات تعاونية زراعية</span><span class="sv">7</span></div><div class="sr"><span class="sk">شعير (اردب)</span><span class="sv">1,993,200</span></div><div class="sr"><span class="sk">قمح (اردب)</span><span class="sv">207,705</span></div><div class="sr"><span class="sk">زيتون (طن)</span><span class="sv">14,869</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--sky2)"></span>الثروة السمكية والصناعة</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">عدد مراكب الصيد</span><span class="sv">135</span></div><div class="sr"><span class="sk">وحدات الصيد المرخص</span><span class="sv">414</span></div>
+    </div>
+    <div class="dv"></div>
+    <div class="ct" style="margin-bottom:.5rem"><span class="cdot" style="background:var(--red2)"></span>الصناعة</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">منشآت صناعية</span><span class="sv">17</span></div><div class="sr"><span class="sk">ورش حرفية مرخصة</span><span class="sv">236</span></div><div class="sr"><span class="sk">المناطق الصناعية</span><span class="sv">1</span></div><div class="sr"><span class="sk">المصانع المنتجة</span><span class="sv">2</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--amb2)"></span>مقارنة القطاعات الاقتصادية</div>
+    <div class="legend"><span class="litem"><span class="lsq" style="background:#D4A43C"></span>سياحة</span><span class="litem"><span class="lsq" style="background:#208248"></span>زراعة</span><span class="litem"><span class="lsq" style="background:#1D7FD8"></span>صيد</span><span class="litem"><span class="lsq" style="background:#C43A2C"></span>صناعة</span></div>
+    <div class="cw" style="height:190px"><canvas id="ch-econ-sectors" role="img" aria-label="القطاعات">القطاعات الاقتصادية.</canvas></div>
+  </div>
+</div>
+<div class="ft"><span><b>اعداد:</b> المرصد الحضري لمحافظة جنوب سيناء</span><span><b>المصدر:</b> مركز المعلومات بديوان عام المحافظة &bull; 2025</span></div>
+</section>
+<section id="p-transport" class="page">
+<div class="hero"><div><div class="hero-ar">الموانئ والنقل والاتصالات</div><div class="hero-en">Ports, Transport &amp; Communications</div></div><div class="hero-tag">Drill Down &mdash; النقل</div></div>
+
+<div class="sl">الموانئ</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--teal2)"></span>الموانئ البحرية والبرية</div>
+    <div class="port"><span class="pname">ميناء شرم الشيخ</span><span class="ptype sea">بحري</span></div>
+    <div class="port"><span class="pname">ميناء نويبع</span><span class="ptype sea">بحري</span></div>
+    <div class="port"><span class="pname">ميناء طور سيناء التجاري</span><span class="ptype sea">بحري</span></div>
+    <div class="port"><span class="pname">ميناء الصيد بطور سيناء</span><span class="ptype fish">صيد</span></div>
+    <div class="port"><span class="pname">ميناء ابو زنيمة</span><span class="ptype sea">بحري</span></div>
+    <div class="port"><span class="pname">ميناء طابا</span><span class="ptype land">بري</span></div>
+    <div class="dv"></div>
+    <div class="m3">
+      <div class="mb"><div class="mbv" style="color:var(--teal2)">5</div><div class="mbl">موانئ بحرية</div></div>
+      <div class="mb"><div class="mbv" style="color:var(--sky2)">1</div><div class="mbl">ميناء صيد</div></div>
+      <div class="mb"><div class="mbv" style="color:var(--gold2)">1</div><div class="mbl">ميناء بري</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--sky2)"></span>شبكة النقل والاتصالات</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">اجمالي الطرق المرصوفة الداخلية (كم)</span><span class="sv">1,075.8</span></div><div class="sr"><span class="sk">الطرق الاقليمية الخارجية (كم)</span><span class="sv">1,205</span></div><div class="sr"><span class="sk">عدد السنترالات</span><span class="sv">18</span></div><div class="sr"><span class="sk">السعة القصوى للسنترالات</span><span class="sv">70,736</span></div><div class="sr"><span class="sk">السعة المتاحة العاملة</span><span class="sv">40,818</span></div><div class="sr"><span class="sk">مقدار الوفر في الخطوط</span><span class="sv">29,918</span></div><div class="sr"><span class="sk">عدد مكاتب البريد</span><span class="sv">30</span></div>
+    </div>
+    <div class="dv"></div>
+    <div class="plist">
+<div class="prow"><span class="plbl">الطرق الداخلية (كم)</span><div class="ptrk"><div class="pfill" style="width:86%;background:linear-gradient(90deg,var(--sky),var(--sky2))"></div></div><span class="ppct">86%</span></div><div class="prow"><span class="plbl">الطرق الاقليمية (كم)</span><div class="ptrk"><div class="pfill" style="width:96%;background:linear-gradient(90deg,var(--teal),var(--teal2))"></div></div><span class="ppct">96%</span></div><div class="prow"><span class="plbl">السعة المتاحة %</span><div class="ptrk"><div class="pfill" style="width:58%;background:linear-gradient(90deg,var(--gold),var(--gold2))"></div></div><span class="ppct">58%</span></div>
+    </div>
+  </div>
+</div>
+<div class="ft"><span><b>اعداد:</b> المرصد الحضري لمحافظة جنوب سيناء</span><span><b>المصدر:</b> مركز المعلومات بديوان عام المحافظة &bull; 2025</span></div>
+</section>
+<section id="p-social" class="page">
+<div class="hero"><div><div class="hero-ar">الخدمات الاجتماعية والتضامن</div><div class="hero-en">Social Services &amp; Solidarity</div></div><div class="hero-tag">Drill Down &mdash; الخدمات الاجتماعية</div></div>
+
+<div class="sl">مؤشرات رئيسية</div>
+<div class="kgrid">
+<div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#0A8E7D,#10B8A2)"></div><div class="knum">30</div><div class="klbl">وحدات الخدمة الاجتماعية</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#1A6038,#208248)"></div><div class="knum">60</div><div class="klbl">جمعية اهلية</div><div class="ksub">رعاية وتنمية</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#1358A8,#1D7FD8)"></div><div class="knum">48</div><div class="klbl">دور الحضانة</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#B8882A,#D4A43C)"></div><div class="knum">28,425</div><div class="klbl">وحدات الاسكان</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#3B2888,#5438B0)"></div><div class="knum">2 + 6</div><div class="klbl">قصور وبيوت الثقافة</div></div><div class="kcard"><div class="kbar" style="background:linear-gradient(90deg,#9A4E08,#C86810)"></div><div class="knum">1</div><div class="klbl">مركز ذوي الاحتياجات</div></div>
+</div>
+
+<div class="sl">تفاصيل الخدمات</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--teal2)"></span>الخدمات الاجتماعية والتضامن</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">وحدات الخدمة الاجتماعية</span><span class="sv">30</span></div><div class="sr"><span class="sk">الجمعيات الاهلية (رعاية وتنمية)</span><span class="sv">60</span></div><div class="sr"><span class="sk">دور الحضانة</span><span class="sv">48</span></div><div class="sr"><span class="sk">مراكز ذوي الاحتياجات الخاصة</span><span class="sv">1</span></div><div class="sr"><span class="sk">المستفيدون من المعاش الضمانى (2025)</span><span class="sv" style="color:var(--gold2)">117 حالة</span></div><div class="sr"><span class="sk">المستفيدون من معاش الطفل (2025)</span><span class="sv" style="color:var(--gold2)">110 حالة</span></div><div class="sr"><span class="sk">المستفيدون من المساعدات الاخرى (2025)</span><span class="sv" style="color:var(--gold2)">953 حالة</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--gold2)"></span>الاسكان والثقافة</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">وحدات الاسكان بالمحافظة</span><span class="sv">28,425</span></div><div class="sr"><span class="sk">قصور الثقافة</span><span class="sv">2</span></div><div class="sr"><span class="sk">بيوت الثقافة</span><span class="sv">6</span></div>
+    </div>
+    <div class="dv"></div>
+    <div class="ct" style="margin-bottom:.6rem"><span class="cdot" style="background:var(--amb2)"></span>اجمالي المستفيدين من برامج الضمان 2025</div>
+    <div class="hlg">
+<div class="hlb info"><div class="hlv">117</div><div class="hll">معاش ضمانى</div></div><div class="hlb info"><div class="hlv">110</div><div class="hll">معاش الطفل</div></div><div class="hlb warn"><div class="hlv">953</div><div class="hll">مساعدات اخرى</div></div>
+    </div>
+  </div>
+</div>
+<div class="ft"><span><b>اعداد:</b> المرصد الحضري لمحافظة جنوب سيناء</span><span><b>المصدر:</b> مديرية التضامن الاجتماعي &bull; 2025</span></div>
+</section>
+<section id="p-deprive" class="page">
+<div class="hero"><div><div class="hero-ar">مؤشرات الحرمان</div><div class="hero-en">Deprivation Indicators</div></div><div class="hero-tag">Drill Down &mdash; الحرمان</div></div>
+
+<div class="sl">ملخص مؤشرات الحرمان</div>
+<div class="hlg">
+<div class="hlb ok"><div class="hlv">95.3%</div><div class="hll">متصلون بالكهرباء</div></div><div class="hlb info"><div class="hlv">76.3%</div><div class="hll">متصلون بالصرف الصحي</div></div><div class="hlb warn"><div class="hlv">63.1%</div><div class="hll">متصلون بمياه الشرب</div></div>
+</div>
+
+<div class="sl">تفاصيل مؤشرات الحرمان</div>
+<div class="g3">
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--gold2)"></span>مياه الشرب</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">الاتصال بالشبكة &mdash; حضر</span><span class="sv" style="color:var(--grn2)">90.4%</span></div><div class="sr"><span class="sk">الاتصال بالشبكة &mdash; ريف</span><span class="sv" style="color:var(--red2)">34.6%</span></div><div class="sr"><span class="sk">الاتصال بالشبكة &mdash; اجمالي</span><span class="sv" style="color:var(--amb2)">63.1%</span></div><div class="sr"><span class="sk">يعتمدون على ابار / مياه معبأة</span><span class="sv">37%</span></div>
+    </div>
+    <div class="note"><b>ملاحظة:</b> لا يوجد مناطق محرومة كلياً من مياه الشرب النقية &mdash; معظمها تجمعات سكانية.</div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--red2)"></span>الصرف الصحي &mdash; المناطق المحرومة</div>
+    <div class="clist">
+<div class="citem"><div class="cnum">1</div><div class="ctxt">قرية المالحة &mdash; مدينة راس سدر</div></div><div class="citem"><div class="cnum">2</div><div class="ctxt">قرية الشيخ عطية &mdash; مدينة نويبع</div></div><div class="citem"><div class="cnum">3</div><div class="ctxt">تجمعات قرية راس مسلة &mdash; راس سدر</div></div><div class="citem"><div class="cnum">4</div><div class="ctxt">تجمعات قرية فيران &mdash; ابو رديس</div></div><div class="citem"><div class="cnum">5</div><div class="ctxt">تجمعات قرية الوادي &mdash; طور سيناء</div></div><div class="citem"><div class="cnum">6</div><div class="ctxt">تجمعات مدينة سانت كاترين</div></div><div class="citem"><div class="cnum">7</div><div class="ctxt">تجمعات مدن: طابا &bull; نويبع &bull; دهب &bull; ابو زنيمة &bull; شرم الشيخ</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--grn2)"></span>الكهرباء</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">الاتصال بالشبكة &mdash; حضر</span><span class="sv" style="color:var(--grn2)">99.4%</span></div><div class="sr"><span class="sk">الاتصال بالشبكة &mdash; ريف</span><span class="sv" style="color:var(--grn2)">91%</span></div><div class="sr"><span class="sk">الاتصال بالشبكة &mdash; اجمالي</span><span class="sv" style="color:var(--grn2)">95.3%</span></div><div class="sr"><span class="sk">يعتمدون على مولدات / شمسية</span><span class="sv">4.7%</span></div>
+    </div>
+    <div class="note"><b>ملاحظة:</b> لا يوجد مناطق محرومة من الكهرباء &mdash; 4.7% تعتمد على مولدات وطاقة شمسية (تجمعات سكانية).</div>
+  </div>
+</div>
+<div class="ft"><span><b>اعداد:</b> المرصد الحضري لمحافظة جنوب سيناء</span><span><b>المصدر:</b> الجهاز المركزي للتعبئة والاحصاء &bull; تعداد 2017</span></div>
+</section>
+<section id="p-dev" class="page">
+<div class="hero"><div><div class="hero-ar">جهود التنمية</div><div class="hero-en">Development Efforts</div></div><div class="hero-tag">Drill Down &mdash; التنمية</div></div>
+
+<div class="sl">التعريف بجهود التنمية</div>
+<div class="card">
+  <div class="ct"><span class="cdot" style="background:var(--gold2)"></span>نظرة عامة على جهود التنمية</div>
+  <div class="g3" style="margin-top:.5rem">
+    <div class="stbl">
+<div class="sr"><span class="sk">قطاعات التنمية المنفذة</span><span class="sv">4 قطاعات</span></div><div class="sr"><span class="sk">مشروعات منفذة بنسبة 100%</span><span class="sv">11 مشروع</span></div><div class="sr"><span class="sk">اجمالي التكلفة التقريبية</span><span class="sv">1,391 مليون ج</span></div>
+    </div>
+    <div class="stbl">
+<div class="sr"><span class="sk">اكبر مشروع صحي</span><span class="sv">مجمع الفيروز الطبي</span></div><div class="sr"><span class="sk">تكلفة المجمع الطبي</span><span class="sv">1,353 مليون ج</span></div><div class="sr"><span class="sk">جهة التمويل</span><span class="sv">الهيئة الهندسية للقوات المسلحة</span></div>
+    </div>
+    <div class="stbl">
+<div class="sr"><span class="sk">مدارس تم صيانتها</span><span class="sv">5 مدارس</span></div><div class="sr"><span class="sk">مراكز شباب مطورة</span><span class="sv">2 مركز</span></div><div class="sr"><span class="sk">ملاعب منشأة</span><span class="sv">1 ملعب نجيل صناعي</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="sl">فرص ومقومات التنمية</div>
+<div class="g2">
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--sky2)"></span>المزايا التنافسية للمحافظة</div>
+    <div class="stbl">
+<div class="sr"><span class="sk">الموقع الجغرافي</span><span class="sv">اقليم قناة السويس</span></div><div class="sr"><span class="sk">اطوال الشاطئ</span><span class="sv">600 كم</span></div><div class="sr"><span class="sk">المحميات الطبيعية</span><span class="sv">15 محمية (25% من محميات مصر)</span></div><div class="sr"><span class="sk">تنوع السياحة</span><span class="sv">دينية - ترفيهية - علاجية - مؤتمرات</span></div><div class="sr"><span class="sk">الخامات التعدينية</span><span class="sv">منجنيز - جبس - حجر جيري - فلسبار</span></div><div class="sr"><span class="sk">مصادر الطاقة</span><span class="sv">شمسية وريح</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct"><span class="cdot" style="background:var(--grn2)"></span>محاور التنمية الاستراتيجية</div>
+    <div class="clist">
+<div class="citem"><div class="cnum">1</div><div class="ctxt">تنويع الاقتصاد وتقليل الاعتماد على قطاع واحد</div></div><div class="citem"><div class="cnum">2</div><div class="ctxt">تطوير البنية التحتية في المناطق الريفية والبدوية</div></div><div class="citem"><div class="cnum">3</div><div class="ctxt">الاستثمار في الطاقة المتجددة لخفض التكاليف</div></div><div class="citem"><div class="cnum">4</div><div class="ctxt">تنمية الثروة السمكية والزراعة في البيئات الصحراوية</div></div><div class="citem"><div class="cnum">5</div><div class="ctxt">تطوير المناطق الصناعية في ابو رديس وابو زنيمة وطور سيناء</div></div>
+    </div>
+  </div>
+</div>
+<div class="ft"><span><b>اعداد:</b> المرصد الحضري لمحافظة جنوب سيناء</span><span><b>المصدر:</b> مركز المعلومات بديوان عام المحافظة &bull; 2025</span></div>
+</section>
+<section id="p-projects" class="page">
+<div class="hero"><div><div class="hero-ar">المشروعات المنفذة بنسبة 100%</div><div class="hero-en">Completed Projects (100%)</div></div><div class="hero-tag">Drill Down &mdash; المشروعات</div></div>
+
+<div class="sl">قطاع الصحة</div>
+<div class="card">
+  <div class="ct"><span class="cdot" style="background:var(--red2)"></span>مشروعات الصحة المنفذة 2025</div>
+  <div class="pjlist">
+<div class="pjitem"><span class="pjn">انشاء مجمع الفيروز الطبي بطور سيناء &mdash; الهيئة الهندسية للقوات المسلحة</span><span class="pjc">1,353 مليار ج</span><span class="pjok">&#10003; صحة</span></div>
+  </div>
+</div>
+
+<div class="sl">قطاع التعليم العام</div>
+<div class="card">
+  <div class="ct"><span class="cdot" style="background:var(--grn2)"></span>اعمال صيانة وتطوير المدارس 2025</div>
+  <div class="pjlist">
+<div class="pjitem"><span class="pjn">صيانة مدرسة طه حسين الاعدادية &mdash; طور سيناء</span><span class="pjc">2.030 مليون ج</span><span class="pjok">&#10003; تعليم</span></div><div class="pjitem"><span class="pjn">صيانة مدرسة السادات الابتدائية &mdash; راس سدر</span><span class="pjc">2.8 مليون ج</span><span class="pjok">&#10003; تعليم</span></div><div class="pjitem"><span class="pjn">صيانة مدرسة عمر بن الخطاب الابتدائية &mdash; نويبع</span><span class="pjc">2.7 مليون ج</span><span class="pjok">&#10003; تعليم</span></div><div class="pjitem"><span class="pjn">صيانة مدرسة احمد عرابي الابتدائية &mdash; راس سدر</span><span class="pjc">2.3 مليون ج</span><span class="pjok">&#10003; تعليم</span></div><div class="pjitem"><span class="pjn">صيانة مدرسة سعد زغلول تعليم اساسي &mdash; راس سدر</span><span class="pjc">3.7 مليون ج</span><span class="pjok">&#10003; تعليم</span></div>
+  </div>
+</div>
+
+<div class="sl">قطاع الشباب والرياضة</div>
+<div class="card">
+  <div class="ct"><span class="cdot" style="background:var(--sky2)"></span>مشروعات الشباب والرياضة المنفذة 2025</div>
+  <div class="pjlist">
+<div class="pjitem"><span class="pjn">انشاء المرحلة الاولى للمبنى الاداري لادارة الشباب والرياضة &mdash; شرم الشيخ</span><span class="pjc">1.1 مليون ج</span><span class="pjok">&#10003; شباب</span></div><div class="pjitem"><span class="pjn">تطوير ورفع كفاءة مركز شباب وادي فيران &mdash; ابو رديس</span><span class="pjc">850 الف ج</span><span class="pjok">&#10003; شباب</span></div><div class="pjitem"><span class="pjn">ملعب تدريبي نجيل صناعي بمركز شباب ابو صويرة &mdash; راس سدر</span><span class="pjc">8 مليون ج</span><span class="pjok">&#10003; شباب</span></div>
+  </div>
+</div>
+
+<div class="sl">قطاع التضامن الاجتماعي</div>
+<div class="card">
+  <div class="ct"><span class="cdot" style="background:var(--gold2)"></span>مشروعات التضامن الاجتماعي المنفذة 2025</div>
+  <div class="pjlist">
+<div class="pjitem"><span class="pjn">انشاء الوحدة الاجتماعية بقرية الطرفة &mdash; سانت كاترين</span><span class="pjc">4.3 مليون ج</span><span class="pjok">&#10003; تضامن</span></div><div class="pjitem"><span class="pjn">انشاء الوحدة الاجتماعية بقرية الرملة &mdash; ابو زنيمة</span><span class="pjc">4.3 مليون ج</span><span class="pjok">&#10003; تضامن</span></div>
+  </div>
+</div>
+<div class="ft"><span><b>اعداد:</b> المرصد الحضري لمحافظة جنوب سيناء</span><span><b>المصدر:</b> مركز المعلومات بديوان عام المحافظة &bull; 2025</span></div>
+</section>
+<section id="p-invest" class="page">
+<div class="hero"><div><div class="hero-ar">مقومات وفرص التنمية والاستثمار</div><div class="hero-en">Development Potentials &amp; Investment Opportunities</div></div><div class="hero-tag">Drill Down &mdash; الاستثمار</div></div>
+
+<div class="sl">قطاعات الاستثمار الرئيسية</div>
+<div class="igrid">
+<div class="icard"><div class="iico">&#127958;</div><div class="it">قطاع السياحة</div><div class="ipts"><div class="ipt">تنوع المنتجات: دينية &bull; سفاري &bull; ترفيهية &bull; مؤتمرات &bull; علاجية</div><div class="ipt">244 فندق و132,766 سرير &mdash; طاقة فندقية متنوعة</div><div class="ipt">امكانية اقامة قرى ومنتجعات في مناطق متعددة</div></div></div><div class="icard"><div class="iico">&#9935;</div><div class="it">الصناعة والتعدين</div><div class="ipts"><div class="ipt">خامات: منجنيز &bull; جبس &bull; حجر جيري &bull; فلسبار &bull; كاولين</div><div class="ipt">توفر البترول والغاز &larr; صناعات بتروكيماوية</div><div class="ipt">مناطق مستهدفة: ابو رديس (200 فدان) &bull; ابو زنيمة (250 فدان)</div></div></div><div class="icard"><div class="iico">&#127807;</div><div class="it">الزراعة</div><div class="ipts"><div class="ipt">موقع جغرافي بكر بعيد عن التلوث</div><div class="ipt">تنوع في الانتاج الزراعي ومناطق استصلاح</div><div class="ipt">قدرة عالية للنفاذ للسوق العالمية</div></div></div><div class="icard"><div class="iico">&#9728;</div><div class="it">الطاقة المتجددة</div><div class="ipts"><div class="ipt">توفر مصادر طاقة شمسية وريح</div><div class="ipt">سهولة التصنيع المحلي لبعض نظم الطاقة</div><div class="ipt">فتح مجالات عمل جديدة للحد من البطالة</div></div></div><div class="icard"><div class="iico">&#128739;</div><div class="it">الطرق والبنية الاساسية</div><div class="ipts"><div class="ipt">موقع متميز على شبكات طرق شرق الدلتا والقناة</div><div class="ipt">شبكة نقل متعدد الوسائل (بري &mdash; جوي)</div><div class="ipt">ارتباط ملاحي عبر موانئ نويبع وشرم الشيخ والطور</div></div></div><div class="icard"><div class="iico">&#128025;</div><div class="it">الثروة السمكية</div><div class="ipts"><div class="ipt">135 مركب صيد و414 وحدة مرخصة</div><div class="ipt">600 كم شاطئ على خليجَي السويس والعقبة</div><div class="ipt">امكانية تطوير مزارع اسماك متكاملة</div></div></div>
+</div>
+<div class="ft"><span><b>اعداد:</b> المرصد الحضري لمحافظة جنوب سيناء</span><span><b>المصدر:</b> مركز المعلومات بديوان عام المحافظة &bull; 2025</span></div>
+</section>
+<section id="p-concerns" class="page">
+<div class="hero"><div><div class="hero-ar">هموم المواطنين ومطالب مجلس النواب</div><div class="hero-en">Citizens' Concerns &amp; Parliament Demands</div></div><div class="hero-tag">Drill Down &mdash; هموم المواطنين</div></div>
+
+<div class="sl">ابرز المطالب الجماهيرية</div>
+<div class="card">
+  <div class="ct"><span class="cdot" style="background:var(--gold2)"></span>المطالب الجماهيرية ومطالب اعضاء مجلس النواب</div>
+  <div class="clist">
+<div class="citem"><div class="cnum">1</div><div class="ctxt">توفير فرص عمل والاهتمام بالمشروعات الصغيرة وزيادة نسبة مشاركة ابناء المحافظة في كافة الانشطة</div></div><div class="citem"><div class="cnum">2</div><div class="ctxt">طرح اراضي سكنية للشباب لاقامة سكن مناسب والانتهاء من توزيع الاراضي بتقسيمات الشباب</div></div><div class="citem"><div class="cnum">3</div><div class="ctxt">الانتهاء من توصيل كافة المرافق العامة بتقسيمات الاراضي ببعض مدن المحافظة</div></div><div class="citem"><div class="cnum">4</div><div class="ctxt">الاهتمام بقطاع الصحة من خلال توفير التخصصات النادرة وتقديم خدمة صحية متميزة خاصة للقرى والتجمعات البدوية</div></div><div class="citem"><div class="cnum">5</div><div class="ctxt">سرعة الانتهاء من ملف تقنين الاوضاع للاراضي الزراعية والسكنية بالمحافظة</div></div><div class="citem"><div class="cnum">6</div><div class="ctxt">التوسع في انشاء المزارع لخدمة اهالي المحافظة وتوفير سلالات جديدة تتناسب مع الطبيعة الصحراوية</div></div><div class="citem"><div class="cnum">7</div><div class="ctxt">تسهيل اجراءات عبور كافة البضائع والمستلزمات من نقاط العبور وخاصة نفق الشهيد احمد حمدي</div></div><div class="citem"><div class="cnum">8</div><div class="ctxt">استكمال تقوية خدمة المحمول ببعض التجمعات البدوية بجميع مدن المحافظة</div></div><div class="citem"><div class="cnum">9</div><div class="ctxt">رفع كفاءة الطرق الداخلية ببعض مدن المحافظة وتطوير البنية التحتية للطرق</div></div><div class="citem"><div class="cnum">10</div><div class="ctxt">توفير استراحات للمدرسين بمدارس الوديان والتجمعات البدوية ورفع كفاءة وسائل المواصلات</div></div>
+  </div>
+</div>
+<div class="ft"><span><b>اعداد:</b> المرصد الحضري لمحافظة جنوب سيناء</span><span><b>المصدر:</b> مركز المعلومات بديوان عام محافظة جنوب سيناء &bull; 2025</span></div>
+</section>
+
+<script>
+// ── Navigation ──
+var PAGES = ['home','health','edu','svc','econ','transport','social','deprive','dev','projects','invest','concerns'];
+var chartsDone = {};
+
+function showPage(id) {
+  var i, pages, btns;
+  pages = document.querySelectorAll('.page');
+  for (i = 0; i < pages.length; i++) { pages[i].style.display = 'none'; }
+  btns = document.querySelectorAll('.nbtn');
+  for (i = 0; i < btns.length; i++) { btns[i].className = btns[i].className.replace(' active',''); }
+  document.getElementById('p-' + id).style.display = 'block';
+  var idx = PAGES.indexOf(id);
+  if (idx >= 0) { btns[idx].className += ' active'; }
+  window.scrollTo(0, 0);
+  if (!chartsDone[id]) { chartsDone[id] = true; drawCharts(id); }
+}
+
+// ── Charts ──
+var CC = '#0C1E2E'; // card background for border
+
+function makeDonut(canvasId, lbls, vals, colors) {
+  var el = document.getElementById(canvasId);
+  if (!el) return;
+  new Chart(el, {
+    type: 'doughnut',
+    data: {
+      labels: lbls,
+      datasets: [{ data: vals, backgroundColor: colors, borderColor: CC, borderWidth: 2 }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) { return ' ' + ctx.label + ': ' + ctx.parsed.toLocaleString(); }
+          }
+        }
+      }
+    }
+  });
+}
+
+function makeBar(canvasId, lbls, vals, colors) {
+  var el = document.getElementById(canvasId);
+  if (!el) return;
+  new Chart(el, {
+    type: 'bar',
+    data: {
+      labels: lbls,
+      datasets: [{ data: vals, backgroundColor: colors, borderRadius: 4, borderSkipped: false }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#7A9EC0', font: { size: 11 } }, grid: { display: false }, border: { color: 'rgba(255,255,255,.08)' } },
+        y: { ticks: { color: '#7A9EC0', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,.06)' }, border: { color: 'transparent' } }
+      }
+    }
+  });
+}
+
+function makeHBar(canvasId, lbls, vals, colors) {
+  var el = document.getElementById(canvasId);
+  if (!el) return;
+  new Chart(el, {
+    type: 'bar',
+    data: {
+      labels: lbls,
+      datasets: [{ data: vals, backgroundColor: colors, borderRadius: 4, borderSkipped: false }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#7A9EC0', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,.06)' }, border: { color: 'transparent' } },
+        y: { ticks: { color: '#7A9EC0', font: { size: 11 } }, grid: { display: false }, border: { color: 'rgba(255,255,255,.08)' } }
+      }
+    }
+  });
+}
+
+function drawCharts(id) {
+  if (id === 'home') {
+    makeDonut('ch-edu-dist',
+      ['اقل من متوسط', 'متوسط وفوق', 'جامعي', 'امي', 'يقرأ ويكتب'],
+      [25036, 15627, 10917, 12175, 9566],
+      ['#10B8A2', '#1D7FD8', '#D4A43C', '#4A6E88', '#C43A2C']
+    );
+    makeBar('ch-labor',
+      ['قوة العمل', 'مشتغلون', 'متعطلون'],
+      [68.3, 55.1, 1.9],
+      ['#1D7FD8', '#208248', '#C43A2C']
+    );
+  }
+  if (id === 'health') {
+    makeDonut('ch-health-staff',
+      ['اطباء', 'ممرضون', 'اسعاف'],
+      [1998, 1795, 67],
+      ['#C43A2C', '#1D7FD8', '#D4A43C']
+    );
+    makeBar('ch-health-fac',
+      ['مستشفى حكومي', 'مستشفى خاص', 'وحدة صحية', 'مركز صحي', 'مكتب صحة'],
+      [8, 6, 18, 9, 18],
+      ['#C43A2C', '#E86050', '#1D7FD8', '#10B8A2', '#D4A43C']
+    );
+  }
+  if (id === 'edu') {
+    makeBar('ch-edu-schools',
+      ['مدارس عامة', 'معاهد ازهرية', 'كليات ومعاهد عليا'],
+      [385, 133, 4],
+      ['#208248', '#10B8A2', '#D4A43C']
+    );
+    makeDonut('ch-edu-students',
+      ['تلاميذ عام', 'تلاميذ ازهري', 'طلاب عالي'],
+      [46869, 7291, 2294],
+      ['#208248', '#1D7FD8', '#D4A43C']
+    );
+  }
+  if (id === 'svc') {
+    makeHBar('ch-svc-cover',
+      ['كهرباء حضر', 'كهرباء ريف', 'صرف حضر', 'صرف ريف', 'مياه حضر', 'مياه ريف'],
+      [99.4, 91.0, 96.8, 54.5, 90.4, 34.6],
+      ['#1D7FD8', '#5AB0F0', '#10B8A2', '#3DD5C2', '#D4A43C', '#F0C060']
+    );
+  }
+  if (id === 'econ') {
+    makeBar('ch-tourism',
+      ['فنادق', 'غرف (الف)', 'اسرة (الف)'],
+      [244, 63.1, 132.8],
+      ['#D4A43C', '#10B8A2', '#1D7FD8']
+    );
+    makeDonut('ch-econ-sectors',
+      ['سياحة', 'زراعة', 'صيد', 'صناعة'],
+      [244, 36589, 135, 17],
+      ['#D4A43C', '#208248', '#1D7FD8', '#C43A2C']
+    );
+  }
+}
+
+// init home on load
+window.onload = function() {
+  Chart.defaults.font.family = "'Cairo', sans-serif";
+  Chart.defaults.color = '#7A9EC0';
+  chartsDone['home'] = true;
+  drawCharts('home');
+};
+
+</script>
+</body>
+</html>
